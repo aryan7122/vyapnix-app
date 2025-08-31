@@ -1,53 +1,63 @@
-import React, { useContext } from "react";
-import { ScrollView, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useContext, useState } from "react";
+import { ScrollView, View, Text, TouchableOpacity, SafeAreaView } from "react-native";
 import tw from "twrnc";
+import { ArrowLeft, Settings } from "lucide-react-native";
+
+// --- Contexts ---
 import { useTheme } from "../src/context/ThemeContext";
+
+// --- Aapke Components ---
 import AppSettingsScreen from "../src/screens/Profile/AppSettingsScreen";
 import UserProfilePage from "../src/screens/Profile/UserProfilePage";
-import { BlurView } from "expo-blur";
-import { Text, TouchableOpacity } from "react-native";
-import { Settings } from "lucide-react-native";
+import EditProfileForm from "../src/screens/Profile/EditProfileForm"; // ✨ Ise import karein
 import { RoleContext } from "../src/context/RoleContext";
-import Animated from "react-native-reanimated";
 
 export default function Profile() {
-  const { theme } = useTheme();
-  const { role } = useContext(RoleContext);
-  const [menuVisible, setMenuVisible] = React.useState(false);
+    const { theme } = useTheme();
+    const { role } = useContext(RoleContext);
 
-  return (
-    <SafeAreaView
-      style={[tw`flex-1`, { backgroundColor: theme.colors.background }]}>
-      {/* Fixed Blur Header */}
-      <View
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 64,
-          zIndex: 50,
-          backgroundColor: theme.colors.background,
-          backdropFilter: "blur(12px)",
-        }}>
-        <View style={tw`flex-row items-center justify-between px-4 h-16`}>
-          <Text style={[tw`text-lg font-bold`, { color: theme.colors.text }]}>
-            {role} Profile
-          </Text>
-          <TouchableOpacity onPress={() => setMenuVisible((p) => !p)}>
-            <Settings size={22} color={theme.colors.iconColor} />
-          </TouchableOpacity>
-        </View>
-      </View>
+    // ✨ FIX 1: State banayein jo batayega ki form dikhana hai ya nahi
+    const [isEditing, setIsEditing] = useState(false);
 
-      {/* Scrollable content */}
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingTop: 64 }}>
-        <UserProfilePage />
-        <AppSettingsScreen />
-      </ScrollView>
-    </SafeAreaView>
-  );
+    // Function jo state ko badlega (true/false karega)
+    const toggleEditMode = () => {
+        setIsEditing(prevState => !prevState);
+    };
+
+
+    return (
+        <SafeAreaView style={[tw`flex-1`, { backgroundColor: theme.colors.background }]}>
+            {/* Header (Yeh hamesha dikhega) */}
+            <View style={tw`flex-row items-center gap-10 center justify-between px-4 h-16`}>
+                <Text style={[tw`text-lg font-bold flex gap-4  items-center`, { color: theme.colors.text }]}>
+                    {isEditing && (
+                        <TouchableOpacity onPress={toggleEditMode} style={tw` -ml-2`}>
+                            <ArrowLeft size={24} color={theme.colors.text} />
+                        </TouchableOpacity>
+                    )}
+                    {role} Profile
+                </Text>
+                {/* Setting icon abhi ke liye hide kar dete hain jab form khula ho */}
+                {!isEditing && (
+                    <TouchableOpacity>
+                        <Settings size={22} color={theme.colors.iconColor} />
+                    </TouchableOpacity>
+                )}
+            </View>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
+                {/* ✨ FIX 2: Condition ke hisaab se component dikhayein */}
+                {isEditing ? (
+                    // Agar 'isEditing' true hai, to form dikhayein
+                    <EditProfileForm onClose={toggleEditMode} />
+                ) : (
+                    // Agar 'isEditing' false hai, to profile aur settings dikhayein
+                    <>
+                        <UserProfilePage />
+                        <AppSettingsScreen onEditProfilePress={toggleEditMode} />
+                    </>
+                )}
+            </ScrollView>
+        </SafeAreaView>
+    );
 }

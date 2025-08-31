@@ -7,15 +7,17 @@ import ThemeProvider, { useTheme } from "./src/context/ThemeContext";
 import { RoleProvider } from "./src/context/RoleContext";
 import { StatusBar, Platform } from "react-native";
 import * as NavigationBar from "expo-navigation-bar";
-
+import { LanguageProvider } from './src/context/LanguageContext';
 export default function RootLayout() {
 	return (
 		<ThemeProvider>
 			<RoleProvider>
-				<ThemedStatusBar />
-				<Stack screenOptions={{ headerShown: false }}>
-					<Stack.Screen name="(tabs)" />
-				</Stack>
+				<LanguageProvider>
+					<ThemedStatusBar />
+					<Stack screenOptions={{ headerShown: false }}>
+						<Stack.Screen name="(tabs)" />
+					</Stack>
+				</LanguageProvider>
 			</RoleProvider>
 		</ThemeProvider>
 	);
