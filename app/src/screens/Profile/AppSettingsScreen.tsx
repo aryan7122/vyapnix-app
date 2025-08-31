@@ -1,8 +1,9 @@
 import React, { FC, useContext, useMemo, useState } from "react";
 import { View, Text, TouchableOpacity, Switch, Modal, Pressable, ActivityIndicator } from "react-native";
 import {
-    ChevronRight, User, MapPin, LogOut, Palette, Shield, Lock, Sun, Moon, Zap, Star, Bell, CreditCard, Store, Package, Truck, MessageSquare, User2, LandmarkIcon, PaintBucket, Languages, LucideIcon
+    ChevronRight, User,BookText,Users, MapPin, MessageCircle, LogOut, Palette, Shield, Lock, Sun, Moon, Zap, Star, Bell, CreditCard, Store, Package, Truck, MessageSquare, User2, LandmarkIcon, PaintBucket, Languages, LucideIcon
 } from "lucide-react-native";
+
 import tw from "twrnc";
 import tinycolor from 'tinycolor2';
 import Animated, { FadeInDown } from "react-native-reanimated";
@@ -101,7 +102,7 @@ export default function AppSettingsScreen({ onEditProfilePress = () => {} }: App
     const [isLangModalVisible, setLangModalVisible] = useState(false);
 
     // ✨ FIX 2: iconMap ko type de diya gaya hai taaki indexing error na aaye.
-    const iconMap: { [key: string]: LucideIcon } = { User, MapPin, Lock, Shield, Star, Bell, Truck, Package, Store, MessageSquare, CreditCard };
+    const iconMap: { [key: string]: LucideIcon } = { User, MapPin, Lock, Shield, Star, Bell, Truck, Package, Store, MessageSquare, CreditCard,MessageCircle,Users ,BookText};
     
     // ✨ FIX 3: Translation object ko type-safe tareeke se access kiya gaya hai.
     const t = settingsScreenData[locale as Locale];
@@ -187,3 +188,4 @@ export default function AppSettingsScreen({ onEditProfilePress = () => {} }: App
     );
 }
 
+// old
