@@ -12,7 +12,7 @@ import { FilterButtons } from '../src/components/ui/FilterButtons';
 export default function ContactsTab() {
     const { theme } = useTheme();
     const { locale } = useLanguage();
-    const t = contactsScreenData[locale as 'en' | 'hi' | 'en-HI'];
+const t = contactsScreenData[locale as 'en' | 'hi' | 'en-HI'] || contactsScreenData.en;
     
     const [searchQuery, setSearchQuery] = useState('');
     const [menuVisible, setMenuVisible] = useState(false);

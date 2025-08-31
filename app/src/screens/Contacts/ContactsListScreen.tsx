@@ -1,82 +1,174 @@
-import React, { useState, useMemo, FC } from 'react';
+import React, { useMemo, FC } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
-import { ArrowUpRight, ArrowDownLeft } from 'lucide-react-native';
+import { ArrowUpRight, ArrowDownLeft, Phone, MessageSquare, IndianRupee } from 'lucide-react-native';
 import tw from 'twrnc';
 import { useRouter } from 'expo-router';
-// ✨ Library install hone ke baad yeh line ab kaam karegi
-import { format } from 'date-fns';
+import { formatDistanceToNowStrict } from 'date-fns';
 
 import { useTheme } from '../../context/ThemeContext';
-import { mockContacts, Contact } from '../../data/contactsData';
+import { mockContacts, Contact, Transaction } from '../../data/contactsData';
 
-// --- Naya aur Behtar Contact Card Component ---
-const ContactCard: FC<{ item: Contact; onPress: () => void }> = ({ item, onPress }) => {
-    const { theme } = useTheme();
-    const lastInteraction = item.interactionHistory?.[0];
+// --- Helper: get latest activity (call/sms/transaction) ---
+const getLatestActivity = (contact: Contact) => {
+  const lastInteraction = contact.interactionHistory?.[0];
+  const lastTransaction = contact.transactions?.sort(
+    (a, b) => b.date.getTime() - a.date.getTime()
+  )[0];
 
-    const roleTagStyle = {
-        'client': tw`bg-blue-500/20 text-blue-500`, 'business': tw`bg-green-500/20 text-green-500`,
-        'employee': tw`bg-purple-500/20 text-purple-500`, 'user': tw`bg-gray-500/20 text-gray-500`,
-    }[item.role];
-    
-    return (
-        <TouchableOpacity onPress={onPress} style={[tw`flex-row items-center p-3 rounded-2xl mb-2 mx-4`, { backgroundColor: theme.colors.card }]}>
-            <View>
-                <Image source={{ uri: item.avatarUrl }} style={tw`w-14 h-14 rounded-full`} />
-                {item.isOnline && <View style={[tw`absolute bottom-0 right-0 w-4 h-4 rounded-full border-2 bg-green-500`, {borderColor: theme.colors.card}]} />}
-            </View>
-            <View style={tw`flex-1 ml-4`}>
-                <Text style={[tw`text-base font-semibold`, { color: theme.colors.text }]}>{item.name}</Text>
-                <View style={[tw`py-0.5 px-2 rounded-full mt-1 self-start`, roleTagStyle]}>
-                    <Text style={[tw`text-xs font-bold capitalize`, roleTagStyle]}>{item.role}</Text>
-                </View>
-            </View>
-            {lastInteraction && (
-                <View style={tw`items-end`}>
-                    <Text style={[tw`text-xs`, { color: theme.colors.textSecondary }]}>{format(lastInteraction.time, 'p')}</Text>
-                    {lastInteraction.direction === 'outgoing' && <ArrowUpRight size={16} color="#22c55e" style={tw`mt-1`} />}
-                    {lastInteraction.direction === 'incoming' && <ArrowDownLeft size={16} color="#f97316" style={tw`mt-1`} />}
-                </View>
-            )}
-        </TouchableOpacity>
-    );
+  if (!lastInteraction && !lastTransaction) return null;
+
+  if (lastInteraction && (!lastTransaction || lastInteraction.time >= lastTransaction.date)) {
+    return { type: lastInteraction.type, data: lastInteraction, time: lastInteraction.time };
+  }
+
+  return { type: 'transaction', data: lastTransaction, time: lastTransaction!.date };
 };
 
-export default function ContactsListScreen({ searchQuery, selectedFilter }: { searchQuery: string, selectedFilter: string }) {
-    const router = useRouter();
-    
-    const filteredContacts = useMemo(() => {
-        let contacts = [...mockContacts].sort((a, b) => {
-            const timeA = a.interactionHistory?.[0]?.time.getTime() || 0;
-            const timeB = b.interactionHistory?.[0]?.time.getTime() || 0;
-            return timeB - timeA;
-        });
-        
-        if (selectedFilter !== 'all' && selectedFilter !== 'recent') {
-             if (selectedFilter === 'favorites') {
-                contacts = contacts.filter(c => c.isFavorite);
-             } else {
-                contacts = contacts.filter(c => c.role === selectedFilter);
-             }
-        }
-        
-        if (searchQuery) {
-            contacts = contacts.filter(c => 
-                c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                c.phone.includes(searchQuery)
-            );
-        }
-        return contacts;
-    }, [selectedFilter, searchQuery]);
+// --- Contact Card ---
+const ContactCard: FC<{ item: Contact; onPress: () => void }> = ({ item, onPress }) => {
+  const { theme } = useTheme();
+  const latestActivity = getLatestActivity(item);
+
+  // Split role style into bg + text
+  const roleTag = {
+    client: { bg: tw`bg-blue-500/20`, text: tw`text-blue-500` },
+    business: { bg: tw`bg-green-500/20`, text: tw`text-green-500` },
+    employee: { bg: tw`bg-purple-500/20`, text: tw`text-purple-500` },
+    user: { bg: tw`bg-gray-500/20`, text: tw`text-gray-500` },
+  }[item.role];
+
+  const ActivitySnippet = () => {
+    if (!latestActivity) return null;
+
+    let icon, text;
+    let textColor = theme.colors.textSecondary;
+
+    switch (latestActivity.type) {
+      case 'call':
+        icon = <Phone size={14} color={theme.colors.textSecondary} />;
+        text = latestActivity.data.direction === 'outgoing' ? 'Outgoing call' : 'Incoming call';
+        break;
+      case 'sms':
+        icon = <MessageSquare size={14} color={theme.colors.textSecondary} />;
+        text = latestActivity.data.text;
+        break;
+      case 'transaction':
+        const tx = latestActivity.data as Transaction;
+        icon = (
+          <IndianRupee
+            size={14}
+            color={tx.type === 'credit' ? '#22c55e' : theme.colors.textSecondary}
+          />
+        );
+        text =
+          tx.type === 'credit'
+            ? `₹${tx.paidAmount} received`
+            : `₹${tx.items.reduce((s, i) => s + i.price, 0)} spent`;
+        textColor = tx.type === 'credit' ? '#22c55e' : theme.colors.textSecondary;
+        break;
+    }
 
     return (
-        <FlatList
-            data={filteredContacts}
-            keyExtractor={item => item.id}
-            renderItem={({ item }) => <ContactCard item={item} onPress={() => router.push(`/contact-detail?id=${item.id}`)} />}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 150 }}
-        />
+      <View style={tw`flex-row items-center mt-1`}>
+        {icon}
+        <Text style={[tw`text-xs ml-1.5`, { color: textColor }]} numberOfLines={1}>
+          {text}
+        </Text>
+      </View>
     );
-}
+  };
 
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={[
+        tw`flex-row items-center p-3 rounded-2xl mb-2 mx-4`,
+        { backgroundColor: theme.colors.card },
+      ]}
+    >
+      {/* Avatar */}
+      <View>
+        <Image source={{ uri: item.avatarUrl }} style={tw`w-14 h-14 rounded-full`} />
+        {item.isOnline && (
+          <View
+            style={[
+              tw`absolute bottom-0 right-0 w-4 h-4 rounded-full border-2 bg-green-500`,
+              { borderColor: theme.colors.card },
+            ]}
+          />
+        )}
+      </View>
+
+      {/* Name + role + activity */}
+      <View style={tw`flex-1 ml-4`}>
+        <Text
+          style={[tw`text-base font-semibold`, { color: theme.colors.text }]}
+          numberOfLines={1}
+        >
+          {item.name}
+        </Text>
+        <ActivitySnippet />
+      </View>
+
+      {/* Right side: time + role */}
+      {latestActivity && (
+        <View style={tw`items-end`}>
+          <Text style={[tw`text-xs`, { color: theme.colors.textSecondary }]}>
+            {formatDistanceToNowStrict(latestActivity.time, { addSuffix: true })}
+          </Text>
+          <View style={[tw`py-0.5 px-2 rounded-full mt-1.5`, roleTag.bg]}>
+            <Text style={[tw`text-xs font-bold capitalize`, roleTag.text]}>{item.role}</Text>
+          </View>
+        </View>
+      )}
+    </TouchableOpacity>
+  );
+};
+
+// --- Contacts List Screen ---
+export default function ContactsListScreen({
+  searchQuery,
+  selectedFilter,
+}: {
+  searchQuery: string;
+  selectedFilter: string;
+}) {
+  const router = useRouter();
+
+  const filteredContacts = useMemo(() => {
+    let contacts = [...mockContacts].sort((a, b) => {
+      const timeA = getLatestActivity(a)?.time.getTime() || 0;
+      const timeB = getLatestActivity(b)?.time.getTime() || 0;
+      return timeB - timeA;
+    });
+
+    if (selectedFilter !== 'all' && selectedFilter !== 'recent') {
+      contacts =
+        selectedFilter === 'favorites'
+          ? contacts.filter((c) => c.isFavorite)
+          : contacts.filter((c) => c.role === selectedFilter);
+    }
+
+    if (searchQuery) {
+      contacts = contacts.filter(
+        (c) =>
+          c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          c.phone.includes(searchQuery)
+      );
+    }
+
+    return contacts;
+  }, [selectedFilter, searchQuery]);
+
+  return (
+    <FlatList
+      data={filteredContacts}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => (
+        <ContactCard item={item} onPress={() => router.push(`/contact-detail?id=${item.id}`)} />
+      )}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 150, paddingTop: 8 }}
+    />
+  );
+}
