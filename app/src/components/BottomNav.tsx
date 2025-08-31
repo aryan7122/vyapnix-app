@@ -8,7 +8,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useRouter } from "expo-router";
 import tw from "twrnc";
-import { LinearGradient } from 'expo-linear-gradient'; // ✨ बदलाव: Expo की लाइब्रेरी का उपयोग करें
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from "../context/ThemeContext";
 
 interface TabItem {
@@ -17,11 +17,13 @@ interface TabItem {
   route?: string;
 }
 
+// ✨ FIX: "Client" has been changed to "Contacts" and the route is updated.
+// The "Home" route is also fixed to point to the index screen.
 const mainTabs: TabItem[] = [
-  { name: "Home", icon: <Home />, route: "/(tabs)/home" },
+  { name: "Home", icon: <Home />, route: "/(tabs)/" },
   { name: "Shop", icon: <ShoppingBag />, route: "/(tabs)/shop" },
   { name: "Add", icon: <Plus /> },
-  { name: "Client", icon: <Users />, route: "/(tabs)/client" },
+  { name: "Contacts", icon: <Users />, route: "/(tabs)/contacts" },
   { name: "Profile", icon: <User />, route: "/(tabs)/profile" },
 ];
 
@@ -39,7 +41,6 @@ export default function BottomNav() {
   const [addActiveIcon, setAddActiveIcon] = useState<JSX.Element | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
-  // ✨ नए थीम सिस्टम का उपयोग
   const { theme } = useTheme();
 
   const animValues = useRef(floatingIcons.map(() => useSharedValue(0))).current;
@@ -57,7 +58,7 @@ export default function BottomNav() {
 
   const handleFloatingIconPress = (item: TabItem) => {
     const styledIcon = React.cloneElement(item.icon, {
-      color: theme.colors.iconColor, // ✨ थीम का उपयोग
+      color: theme.colors.iconColor,
       size: 30,
     });
     setAddActiveIcon(styledIcon);
@@ -67,10 +68,9 @@ export default function BottomNav() {
   };
 
   const handleMainTabPress = (tab: TabItem) => {
-    if (tab.name === "Add") return; // 'Add' पर क्लिक करने से कुछ नहीं होगा
+    if (tab.name === "Add") return;
     
     setActiveTab(tab.name);
-    // अगर चुना गया टैब फ्लोटिंग मेनू का हिस्सा नहीं है, तो सेंट्रल आइकन को रीसेट करें
     if (!floatingIcons.some(f => f.name === tab.name)) {
       setAddActiveIcon(null);
     }
@@ -85,7 +85,7 @@ export default function BottomNav() {
     floatingIcons.map((item, i) => {
       const style = useAnimatedStyle(() => {
         const angle = -20 - (i * 35);
-        const radius = 110; // थोड़ा कम किया ताकि स्क्रीन से बाहर न जाए
+        const radius = 110;
         return {
           transform: [
             { translateX: animValues[i].value * radius * Math.cos((angle * Math.PI) / 180) },
@@ -100,10 +100,8 @@ export default function BottomNav() {
         <Animated.View key={item.name} style={[tw`absolute`, style]}>
           <TouchableOpacity
             onPress={() => handleFloatingIconPress(item)}
-            // ✨ फ्लोटिंग आइकन्स को कार्ड जैसा लुक दिया गया है
             style={[tw`w-14 h-14 rounded-full items-center justify-center`, theme.shadows.md, { backgroundColor: theme.colors.card }]}
           >
-            {/* ✨ फ्लोटिंग आइकन्स का रंग प्राइमरी कलर होगा */}
             {React.cloneElement(item.icon, { color: theme.colors.primary, size: 24 })}
           </TouchableOpacity>
         </Animated.View>
@@ -119,9 +117,8 @@ export default function BottomNav() {
       >
         <View style={[tw`p-3 rounded-full`, isActive && { backgroundColor: theme.colors.tabBarActive + '20' }]}>
             {React.cloneElement(tab.icon, {
-                size: 26,
-                // ✨ एक्टिव और इनएक्टिव टैब के रंग थीम से
-                color: isActive ? theme.colors.tabBarActive : theme.colors.tabBarInactive,
+              size: 26,
+              color: isActive ? theme.colors.tabBarActive : theme.colors.tabBarInactive,
             })}
         </View>
       </TouchableOpacity>
@@ -134,29 +131,24 @@ export default function BottomNav() {
         <Tab tab={mainTabs[0]} />
         <Tab tab={mainTabs[1]} />
 
-        {/* सेंट्रल बटन को बाकी टैब्स के ऊपर रखने के लिए zIndex और पोजिशनिंग */}
         <View style={tw`relative items-center justify-center -mt-8 z-10`}>
           {renderFloatingIcons()}
           <TouchableOpacity
             onPress={() => {
-              // अगर कोई फ्लोटिंग आइकन चुना हुआ है, तो उसे रीसेट करें
               if (addActiveIcon) {
                 setAddActiveIcon(null);
                 setActiveTab("Home");
-                router.push('/(tabs)/home');
+                router.push('/(tabs)/');
               } else {
-                // वरना मेनू को खोलें/बंद करें
                 setIsMenuOpen(!isMenuOpen);
               }
             }}
           >
-            {/* ✨ सेंट्रल बटन में ग्रेडिएंट और शैडो का उपयोग */}
             <LinearGradient
               colors={addActiveIcon ? theme.gradients.card : theme.gradients.primaryButton}
               style={[tw`w-16 h-16 rounded-full items-center justify-center`, theme.shadows.lg]}
             >
               {addActiveIcon ? (
-                // चुने हुए आइकन का रंग प्राइमरी होगा
                 React.cloneElement(addActiveIcon, {color: theme.colors.primary})
               ) : (
                 <Animated.View style={animatedRotation}>
