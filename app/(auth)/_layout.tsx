@@ -1,14 +1,14 @@
-import React, { Component } from 'react'
-import { Text, View } from 'react-native'
+// app/(auth)/_layout.tsx
 
-export class _layout extends Component {
-  render() {
-    return (
-      <View>
-        {/* <Text> textInComponent </Text> */}
-      </View>
-    )
-  }
+import { Stack } from 'expo-router';
+import React from 'react';
+
+export default function AuthLayout() {
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="welcome" />
+      <Stack.Screen name="login" />
+      <Stack.Screen name="register" />
+    </Stack>
+  );
 }
-
-export default _layout

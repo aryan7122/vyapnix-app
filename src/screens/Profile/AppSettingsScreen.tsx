@@ -14,6 +14,9 @@ import { useLanguage } from "../../context/LanguageContext";
 import { settingsScreenData } from "../../data/settingsScreenData";
 import { LanguageModal } from "../../components/LanguageModal";
 import { useRouter } from 'expo-router';
+
+import { useAuth } from '.../../src/context/AuthContext'; 
+
 // --- Components ke liye Prop Types ---
 type SectionHeaderProps = { title: string; };
 
@@ -140,6 +143,9 @@ export default function AppSettingsScreen({ onEditProfilePress = () => {} }: App
 
     const sections = role === "Business" ? [...businessSections, ...userSections] : userSections;
 
+      const { signOut } = useAuth(); 
+    
+
     return (
         <View style={tw`mb-20 pl-4 pr-4 pb-10`}>
             <Animated.View entering={FadeInDown.duration(300)}>
@@ -177,7 +183,7 @@ export default function AppSettingsScreen({ onEditProfilePress = () => {} }: App
                 ))}
 
                 {/* Logout */}
-                <TouchableOpacity style={[tw`flex-row items-center justify-center p-4 mt-2 rounded-xl `, { backgroundColor: theme.colors.card }]}>
+                <TouchableOpacity   onPress={signOut}  style={[tw`flex-row items-center justify-center p-4 mt-2 rounded-xl `, { backgroundColor: theme.colors.card }]}>
                     <LogOut size={20} color={theme.colors.primary} />
                     <Text style={[tw`ml-2 text-base font-bold`, { color: theme.colors.primary }]}>{t.logout}</Text>
                 </TouchableOpacity>

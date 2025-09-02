@@ -68,7 +68,7 @@ const HisabKitab: FC<{ transactions: Transaction[]; t: any; }> = ({ transactions
         const itemSummary = tx.items.map(item => `${item.name} (${item.quantity})`).join(', ');
 
         return (
-            <View style={[tw`mb-3 rounded-xl p-3 border-l-4`, { backgroundColor: theme.colors.background, borderColor: statusColor }]}>
+            <View style={[tw`mb-3 rounded-xl  p-3 border-l-4`, { backgroundColor: theme.colors.background, borderColor: statusColor }]}>
                 <Text style={[tw`font-bold text-base`, { color: theme.colors.text }]}>{tx.title}</Text>
                 {tx.items.length > 0 && <Text style={[tw`text-sm mt-1`, { color: theme.colors.textSecondary }]}>{itemSummary}</Text>}
 
@@ -102,7 +102,7 @@ const HisabKitab: FC<{ transactions: Transaction[]; t: any; }> = ({ transactions
     };
 
     return (
-        <InfoCard title={t.labels.ledgerTitle}>
+        <InfoCard title={t.labels.ledgerTitle} >
             {/* --- New Summary Header --- */}
             <View style={tw`flex-row justify-around mb-4`}>
                 <View style={tw`items-center`}>
@@ -176,7 +176,7 @@ export default function ContactDetailScreen() {
     return (
         <SafeAreaView style={[tw`flex-1 mb-20`, { backgroundColor: theme.colors.background }]}>
             {/* Header Buttons */}
-            <View style={tw`absolute top-0 left-0 right-0 z-10 flex-row items-center justify-between px-4 h-20 pt-8`}>
+            <View style={tw`absolute top-0 left-0 right-0  z-10 flex-row items-center justify-between px-4 h-20 pt-8`}>
                 <TouchableOpacity onPress={() => router.back()} style={tw`p-2 rounded-full bg-black/30`}><ArrowLeft size={24} color="white" /></TouchableOpacity>
                 <View style={tw`flex-row items-center`}>
                     <TouchableOpacity onPress={() => setIsFavorite(!isFavorite)} style={tw`mr-2 p-2 rounded-full bg-black/30`}><Heart size={22} color={isFavorite ? '#ef4444' : 'white'} fill={isFavorite ? '#ef4444' : 'transparent'} /></TouchableOpacity>
@@ -210,20 +210,19 @@ export default function ContactDetailScreen() {
 
                     <Text style={[tw`text-2xl font-bold mt-2 text-center`, { color: theme.colors.text }]}>{contact.name}</Text>
                     <Text style={[tw`text-base mt-1`, { color: theme.colors.textSecondary }]}>{contact.phone}</Text>
-                    <View style={[tw`mt-2 `]}><Text style={[tw`text-xs font-bold capitalize py-1 px-3 rounded-full`, roleTagStyle]}>{contact.role}</Text></View>
+                    <View style={[tw`mt-2 `]}><Text style={[tw`text-xs font-bold capitalize py-1 px-3 rounded-full mb-4`, roleTagStyle]}>{contact.role}</Text></View>
                 </View>
 
                 {/* Action Buttons */}
-                <View style={[tw`flex-row justify-around mx-4 my-6 p-4 rounded-2xl`, { backgroundColor: theme.colors.card }]}>
+                {/* <View style={[tw`flex-row justify-around mx-4 my-6 p-4 rounded-2xl`, { backgroundColor: theme.colors.card }]}>
                     <ActionButton icon={Phone} label={t.actions.call} />
                     <ActionButton icon={MessageSquare} label={t.actions.message} />
                     <ActionButton icon={IndianRupee} label={t.actions.pay} />
                     {contact.role === 'business' && <ActionButton icon={MapPin} label={t.actions.directions} />}
-                </View>
+                </View> */}
 
                 {/* Social Stats Section */}
-                <View style={[tw`flex-row justify-around items-center mx-4 mb-6 p-4 rounded-2xl`, { backgroundColor: theme.colors.card }]}>
-                    {/* ✨ FIX: Rating is now conditional, only for businesses */}
+                {/* <View style={[tw`flex-row justify-around items-center mx-4 mb-6 p-4 rounded-2xl`, { backgroundColor: theme.colors.card }]}>
                     {contact.role === 'business' && contact.socialStats.rating && <Stat label={t.labels.rating} value={contact.socialStats.rating} />}
                     <Stat label={t.labels.followers} value={contact.socialStats.followers} />
                     <TouchableOpacity onPress={handleFollowToggle} style={[tw`py-2 px-5 rounded-full`, { backgroundColor: isFollowing ? theme.colors.background : theme.colors.primary }]}>
@@ -232,12 +231,12 @@ export default function ContactDetailScreen() {
                             <Text style={[tw`ml-2 font-bold`, { color: isFollowing ? theme.colors.primary : 'white' }]}>{isFollowing ? 'Following' : 'Follow'}</Text>
                         </View>
                     </TouchableOpacity>
-                </View>
+                </View> */}
 
                 {/* ✨ New Hisab Kitab (Ledger) for all contacts with transactions */}
-                {contact.transactions && contact.transactions.length > 0 && <HisabKitab transactions={contact.transactions} t={t} />}
 
                 {/* Role-specific Dashboards */}
+                {contact.transactions && contact.transactions.length > 0 && <HisabKitab transactions={contact.transactions} t={t} />}
                 {contact.role === 'employee' && contact.employeeDetails && <EmployeeDashboard contact={contact} t={t} />}
                 {contact.role === 'client' && contact.clientDetails && <ClientDashboard contact={contact} t={t} />}
                 {contact.role === 'business' && contact.businessDetails && <BusinessDashboard contact={contact} t={t} />}

@@ -21,7 +21,7 @@ interface TabItem {
 // The "Home" route is also fixed to point to the index screen.
 const mainTabs: TabItem[] = [
   { name: "Home", icon: <Home />, route: "/(tabs)/" },
-  { name: "Shop", icon: <ShoppingBag />, route: "/(tabs)/shop" },
+  { name: "Store", icon: <ShoppingBag />, route: "/(tabs)/store" },
   { name: "Add", icon: <Plus /> },
   { name: "Contacts", icon: <Users />, route: "/(tabs)/contacts" },
   { name: "Profile", icon: <User />, route: "/(tabs)/profile" },

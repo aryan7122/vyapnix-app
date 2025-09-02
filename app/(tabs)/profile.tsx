@@ -4,13 +4,13 @@ import tw from "twrnc";
 import { ArrowLeft, Settings } from "lucide-react-native";
 
 // --- Contexts ---
-import { useTheme } from "../src/context/ThemeContext";
+import { useTheme } from "../../src/context/ThemeContext";
 
 // --- Aapke Components ---
-import AppSettingsScreen from "../src/screens/Profile/AppSettingsScreen";
-import UserProfilePage from "../src/screens/Profile/UserProfilePage";
-import EditProfileForm from "../src/screens/Profile/EditProfileForm"; // ✨ Ise import karein
-import { RoleContext } from "../src/context/RoleContext";
+import AppSettingsScreen from "../../src/screens/Profile/AppSettingsScreen";
+import UserProfilePage from "../../src/screens/Profile/UserProfilePage";
+import EditProfileForm from "../../src/screens/Profile/EditProfileForm"; // ✨ Ise import karein
+import { RoleContext } from "../../src/context/RoleContext";
 
 export default function Profile() {
     const { theme } = useTheme();

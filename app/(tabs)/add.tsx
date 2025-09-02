@@ -1,7 +1,7 @@
 // app/(tabs)/add.tsx
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useTheme } from '../src/context/ThemeContext';
+import { useTheme } from '../../src/context/ThemeContext';
 
 export default function AddScreen() {
   const { theme } = useTheme();

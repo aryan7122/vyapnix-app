@@ -3,8 +3,8 @@
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import MobileContainer from './src/components/MobileContainer'; // Humara reusable component
-import { useTheme } from './src/context/ThemeContext'; // Humari custom theme
+import MobileContainer from '../src/components/MobileContainer'; // Humara reusable component
+import { useTheme } from '../src/context/ThemeContext'; // Humari custom theme
 
 export default function ModalScreen() {
   const { theme } = useTheme();

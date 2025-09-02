@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, TextInputProps } from 'react-n
 import { LucideIcon, Eye, EyeOff } from 'lucide-react-native';
 import tw from 'twrnc';
 import { useTheme } from '../../context/ThemeContext';
+export * from './SearchableDropdown'; 
 
 // --- Props ki Typing ---
 interface CustomInputProps extends TextInputProps {

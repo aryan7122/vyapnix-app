@@ -100,27 +100,27 @@ const ContactCard: FC<{ item: Contact; onPress: () => void }> = ({ item, onPress
       </View>
 
       {/* Name + role + activity */}
-      <View style={tw`flex-1 ml-4`}>
+      <View style={tw`  ml-4`}>
         <Text
-          style={[tw`text-base font-semibold`, { color: theme.colors.text }]}
+          style={[tw`text-base text-sm font-medium`, { color: theme.colors.text }]}
           numberOfLines={1}
         >
           {item.name}
         </Text>
-        <ActivitySnippet />
+        {/* <ActivitySnippet /> */}
+          <View style={[tw`py-0.5 px-2   rounded-full mt-1.5`, roleTag.bg]}>
+            <Text style={[tw`text-xs font-bold capitalize`, roleTag.text]}>{item.role}</Text>
+          </View>
       </View>
 
       {/* Right side: time + role */}
-      {latestActivity && (
-        <View style={tw`items-end`}>
+      {/* {latestActivity && (
+        <View style={tw`items-end `}>
           <Text style={[tw`text-xs`, { color: theme.colors.textSecondary }]}>
             {formatDistanceToNowStrict(latestActivity.time, { addSuffix: true })}
           </Text>
-          <View style={[tw`py-0.5 px-2 rounded-full mt-1.5`, roleTag.bg]}>
-            <Text style={[tw`text-xs font-bold capitalize`, roleTag.text]}>{item.role}</Text>
-          </View>
         </View>
-      )}
+      )} */}
     </TouchableOpacity>
   );
 };

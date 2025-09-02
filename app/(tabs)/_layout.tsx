@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import BottomNav from '../src/components/BottomNav';
+import BottomNav from '../../src/components/BottomNav';
 import { Slot } from 'expo-router';
-import { useTheme } from '../src/context/ThemeContext';
+import { useTheme } from '../../src/context/ThemeContext';
 
 export default function TabsLayout() {
   const { theme } = useTheme();
@@ -10,7 +10,7 @@ export default function TabsLayout() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <Slot /> 
+      <Slot />
       <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
     </View>
   );

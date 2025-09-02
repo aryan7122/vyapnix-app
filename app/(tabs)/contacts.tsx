@@ -3,17 +3,17 @@ import { View, Text, SafeAreaView, TextInput, Modal, Pressable, TouchableOpacity
 import tw from 'twrnc';
 import { MoreVertical, Search, UserPlus, Shield, Archive } from 'lucide-react-native';
 
-import { useTheme } from '../src/context/ThemeContext';
-import { useLanguage } from '../src/context/LanguageContext';
-import { contactsScreenData } from '../src/data/contactsData';
-import ContactsListScreen from '../src/screens/Contacts/ContactsListScreen';
-import { FilterButtons } from '../src/components/ui/FilterButtons';
+import { useTheme } from '../../src/context/ThemeContext';
+import { useLanguage } from '../../src/context/LanguageContext';
+import { contactsScreenData } from '../../src/data/contactsData';
+import ContactsListScreen from '../../src/screens/Contacts/ContactsListScreen';
+import { FilterButtons } from '../../src/components/ui/FilterButtons';
 
 export default function ContactsTab() {
     const { theme } = useTheme();
     const { locale } = useLanguage();
-const t = contactsScreenData[locale as 'en' | 'hi' | 'en-HI'] || contactsScreenData.en;
-    
+    const t = contactsScreenData[locale as 'en' | 'hi' | 'en-HI'] || contactsScreenData.en;
+
     const [searchQuery, setSearchQuery] = useState('');
     const [menuVisible, setMenuVisible] = useState(false);
     const [selectedFilter, setSelectedFilter] = useState('all'); // Filter ki state yahan hai
@@ -28,10 +28,10 @@ const t = contactsScreenData[locale as 'en' | 'hi' | 'en-HI'] || contactsScreenD
         <SafeAreaView style={[tw`flex-1`, { backgroundColor: theme.colors.background }]}>
             {/* Header */}
             <View style={tw`flex-row items-center justify-between px-4 h-16`}>
-                <View style={[tw`flex-row items-center h-12 flex-1 mr-4 rounded-full px-3`, {backgroundColor: theme.colors.card}]}>
-                    <Search size={20} color={theme.colors.textSecondary}/>
-                    <TextInput 
-                        style={[tw`flex-1 ml-2 text-base`, {color: theme.colors.text}]}
+                <View style={[tw`flex-row items-center h-12 flex-1 mr-4 rounded-full px-3`, { backgroundColor: theme.colors.card }]}>
+                    <Search size={20} color={theme.colors.textSecondary} />
+                    <TextInput
+                        style={[tw`flex-1 ml-2 text-base`, { color: theme.colors.text }]}
                         placeholder={t.searchPlaceholder}
                         placeholderTextColor={theme.colors.textSecondary}
                         value={searchQuery}
@@ -42,7 +42,7 @@ const t = contactsScreenData[locale as 'en' | 'hi' | 'en-HI'] || contactsScreenD
                     <MoreVertical size={24} color={theme.colors.text} />
                 </TouchableOpacity>
             </View>
-            
+
             {/* Filter Buttons */}
             <FilterButtons filters={t.filters} selectedFilter={selectedFilter} onFilterPress={setSelectedFilter} />
 
