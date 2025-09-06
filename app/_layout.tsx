@@ -7,12 +7,14 @@ import React, { useEffect } from "react";
 import { Stack } from "expo-router";
 import { StatusBar, Platform } from "react-native";
 import * as NavigationBar from "expo-navigation-bar";
+import { Provider } from 'react-redux';
 
 // Sabhi Providers ko import karein
 import ThemeProvider, { useTheme } from "../src/context/ThemeContext";
 import { LanguageProvider } from '../src/context/LanguageContext';
 import { AuthProvider } from "../src/context/AuthContext"; // <-- YEH SABSE ZARURI HAI
 import { RoleProvider } from "@/src/context/RoleContext";
+import { store } from '../src/redux/store';
 
 // ThemedStatusBar ko yahan move karein, ya alag file mein rakhein
 function ThemedStatusBar() {
@@ -37,19 +39,22 @@ function ThemedStatusBar() {
 export default function RootLayout() {
     return (
         // AuthProvider ko sabse bahar rakhein ya ThemeProvider ke andar
-        <ThemeProvider>
-            <RoleProvider>
-                <LanguageProvider>
-                    <AuthProvider>
-                        <ThemedStatusBar />
-                        <Stack screenOptions={{ headerShown: false }}>
-                            <Stack.Screen name="(tabs)" />
-                            <Stack.Screen name="(auth)" />
-                            {/* Auth screens ab (auth) group se manage honge */}
-                        </Stack>
-                    </AuthProvider>
-                </LanguageProvider>
-            </RoleProvider>
-        </ThemeProvider>
+        <Provider store={store}>
+            <ThemeProvider>
+                <RoleProvider>
+                    <LanguageProvider>
+                        <AuthProvider>
+                            <ThemedStatusBar />
+                            <Stack screenOptions={{ headerShown: false }}>
+                                <Stack.Screen name="(tabs)" />
+                                <Stack.Screen name="(auth)" />
+                                {/* Auth screens ab (auth) group se manage honge */}
+                            </Stack>
+                        </AuthProvider>
+                    </LanguageProvider>
+                </RoleProvider>
+            </ThemeProvider>
+        </Provider>
+
     );
 }

@@ -92,7 +92,7 @@ const t = (authScreenData[locale as 'en' | 'hi' | 'en-HI'] || authScreenData.en)
     const isLastSlide = currentIndex === t.slides.length - 1;
 
     return (
-        <SafeAreaView style={[tw`flex-1  pt-14`, { backgroundColor: theme.colors.background }]}>
+        <SafeAreaView style={[tw`flex-1   pt-8`, { backgroundColor: theme.colors.background }]}>
             <LinearGradient colors={['#00000000', theme.colors.background]} style={tw`absolute bottom-0 h-1/4 w-full`} />
             <LinearGradient colors={[theme.colors.primary + '20', theme.colors.background]} style={tw`absolute inset-0`} />
             
@@ -110,7 +110,7 @@ const t = (authScreenData[locale as 'en' | 'hi' | 'en-HI'] || authScreenData.en)
             />
 
             <View style={tw`px-6 pb-6 pt-20 `}>
-                <View style={tw`flex-row justify-between items-center`}>
+                <View style={tw`flex-row justify-between items-center mb-20`}>
                     <TouchableOpacity onPress={handleSkip} style={tw`p-2`}>
                         <Text style={[tw`text-lg`, { color: theme.colors.textSecondary }]}>
                             {isLastSlide ? '' : t.skip}
@@ -138,4 +138,4 @@ const t = (authScreenData[locale as 'en' | 'hi' | 'en-HI'] || authScreenData.en)
     );
 }
 
-// 
+// aryanaibot@gmail.com
